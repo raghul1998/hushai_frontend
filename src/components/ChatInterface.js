@@ -1,6 +1,9 @@
 import React, {useState} from 'react';
 import './ChatInterface.css'; // Create this CSS file to style the chat interface
 
+const backendURL = process.env.REACT_APP_API_BASE;
+const searchURL = `${backendURL}/search`
+
 function ChatInterface() {
     const [pastQuery, setPastQuery] = useState('');
     const [query, setQuery] = useState('');
@@ -35,7 +38,7 @@ function ChatInterface() {
 
         try {
             // Make a backend API call to get the response
-            const response = await fetch('http://localhost:4000/search', {
+            const response = await fetch(searchURL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -54,47 +57,50 @@ function ChatInterface() {
     };
 
     return (
-        <div className="chat-interface">
+        <>
             <head>
                 <title>Email Insights Chatbot</title>
             </head>
-            <div className="chat-container">
-                <div className="chat">
-                    <div className="chat-messages">
-                        <div className="message user-message">
-                            <p>{pastQuery}</p>
+            <div className="title">Email Insights Chatbot</div>
+            <div className="chat-interface">
+                <div className="chat-container">
+                    <div className="chat">
+                        <div className="chat-messages">
+                            <div className="message user-message">
+                                <p>{pastQuery}</p>
+                            </div>
+                            {response && (
+                                <div className="message assistant-message">
+                                    <p>{response}</p>
+                                </div>
+                            )}
+                            {loading && (
+                                <div className="message loading-message">
+                                    <p>Loading...</p>
+                                </div>
+                            )}
                         </div>
-                        {response && (
-                            <div className="message assistant-message">
-                                <p>{response}</p>
-                            </div>
-                        )}
-                        {loading && (
-                            <div className="message loading-message">
-                                <p>Loading...</p>
-                            </div>
-                        )}
+                    </div>
+                    <div className="input-container">
+                        <form onSubmit={handleSubmit}>
+                            <input
+                                type="text"
+                                value={query}
+                                onChange={handleQueryChange}
+                                onKeyDown={(event) => {
+                                    if (event.key === 'Enter') {
+                                        event.preventDefault();
+                                        handleSubmit(event);
+                                    }
+                                }}
+                                placeholder="Type your query..."
+                            />
+                            <button type="submit">Send</button>
+                        </form>
                     </div>
                 </div>
-                <div className="input-container">
-                    <form onSubmit={handleSubmit}>
-                        <input
-                            type="text"
-                            value={query}
-                            onChange={handleQueryChange}
-                            onKeyDown={(event) => {
-                                if (event.key === 'Enter') {
-                                    event.preventDefault();
-                                    handleSubmit(event);
-                                }
-                            }}
-                            placeholder="Type your query..."
-                        />
-                        <button type="submit">Send</button>
-                    </form>
-                </div>
             </div>
-        </div>
+        </>
     );
 }
 
