@@ -58,9 +58,6 @@ function ChatInterface() {
 
     return (
         <>
-            <head>
-                <title>Email Insights Chatbot</title>
-            </head>
             <div className="title">Email Insights Chatbot</div>
             <div className="chat-interface">
                 <div className="chat-container">
